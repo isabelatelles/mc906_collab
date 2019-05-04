@@ -12,8 +12,8 @@ wishlist_size = int(0.2 * n_gift_types)
 goodkids_size = int(0.1 * n_children)
 
 child_wishlist = random.randint(low=0, high=n_gift_types, size=(n_children, wishlist_size))
-df_child_whishlist = DataFrame(data=child_wishlist, index=arange(n_children))
-df_child_whishlist.to_csv(index=False, header=False, path_or_buf="created_child_whishlist_"
+df_child_wishlist = DataFrame(data=child_wishlist, index=arange(n_children))
+df_child_wishlist.to_csv(index=False, header=False, path_or_buf="created_child_wishlist_"
                             + str(n_children) + "_" + str(n_gift_types) + ".csv")
 
 gift_goodkids = random.randint(low=0, high=n_children, size=(n_gift_types, goodkids_size))
