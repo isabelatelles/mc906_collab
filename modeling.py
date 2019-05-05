@@ -1,4 +1,5 @@
 import math
+from random import randint, choice
 from fitness_function import avg_normalized_happiness
 
 class SantaProblem():
@@ -14,10 +15,36 @@ class SantaProblem():
     def __repr__(self):
         return "Santa Gifting Problem: {} types of presents for {} children".format(self.n_gift_types, self.n_children)
 
+    def check_triplets(self, individual):
+        for t1 in range(0, self.n_triplets, 3):
+            triplet1 = individual[t1]
+            triplet2 = individual[t1 + 1]
+            triplet3 = individual[t1 + 2]
+            if triplet1 != triplet2 or triplet2 != triplet3:
+                return False
+
+        return True
+
+    def check_twins(self, individual):
+        for t1 in range(self.n_triplets, self.n_triplets + self.n_twins, 2):
+            twin1 = individual[t1]
+            twin2 = individual[t1 + 1]
+            if twin1 != twin2:
+                return False
+
+        return True
+
     def crossover(self, individual_1, individual_2):
         return individual_1
 
     def mutation(self, individual):
+        first = True
+        while first or self.check_triplets(individual) is False or self.check_twins(individual) is False:
+            i = randint(0, self.n_children)
+            j = choice(list(range(0, i)) + list(range(i + 1, self.n_children)))
+            individual[i], individual[j] = individual[j], individual[i]
+            first = False
+
         return individual
 
     def fitness_function(self, individual):
