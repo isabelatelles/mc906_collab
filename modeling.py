@@ -10,18 +10,35 @@ class SantaProblem:
         self.n_gift_quantity = int(n_children/n_gift_types)  # each type of gifts are limited to this quantity
         self.n_gift_pref = int(0.2 * n_gift_types)  # number of gifts a child ranks
         self.n_child_pref = int(0.1 * n_children)  # number of children a gift ranks
-        self.n_triplets = math.ceil(0.015 * n_children / 3.) * 3  # 4% of all population, rounded to the closest number
-        self.n_twins = math.ceil(0.04 * n_children / 2.) * 2  # 1.5% of all population, rounded to the closest number
+        self.n_triplets = math.ceil(0.015 * n_children / 3.) * 3  # 1.5% of all population, rounded to the closest number
+        self.n_twins = math.ceil(0.04 * n_children / 2.) * 2  # 4% of all population, rounded to the closest number
 
     def __repr__(self):
         return "Santa Gifting Problem: {} types of gifts for {} children".format(self.n_gift_types, self.n_children)
 
     def set_triplets(self, individual):
         for t in range(0, self.n_triplets, 3):
-            value = choice([individual[t], individual[t + 1], individual[t + 2]])
-            individual[t] = value
-            individual[t + 1] = value
-            individual[t + 2] = value
+            for index, value in enumerate(individual[t:]):
+                count = 0
+                for gift_id in individual[:t]:
+                    if value == gift_id:
+                        count += 1
+                if 5 - count >= 3:
+                    break
+
+            if individual[t] != value:
+                new_index = individual[index:].index(value) + index
+                individual[new_index] = individual[t]
+                individual[t] = value
+            if individual[t + 1] != value:
+                new_index = individual[index:].index(value) + index
+                individual[new_index] = individual[t]
+                individual[t + 1] = value
+            if individual[t + 2] != value:
+                new_index = individual[index:].index(value) + index
+                individual[new_index] = individual[t]
+                individual[t + 2] = value
+
         return individual
 
     def check_triplets(self, individual):
@@ -36,9 +53,23 @@ class SantaProblem:
 
     def set_twins(self, individual):
         for t in range(self.n_triplets, self.n_triplets + self.n_twins, 2):
-            value = choice([individual[t], individual[t + 1]])
-            individual[t] = value
-            individual[t + 1] = value
+            for index, value in enumerate(individual[t:]):
+                count = 0
+                for gift_id in individual[:t]:
+                    if value == gift_id:
+                        count += 1
+                if 5 - count >= 2:
+                    break
+
+            if individual[t] != value:
+                new_index = individual[index:].index(value) + index
+                individual[new_index] = individual[t]
+                individual[t] = value
+            if individual[t + 1] != value:
+                new_index = individual[index:].index(value) + index
+                individual[new_index] = individual[t]
+                individual[t + 1] = value
+
         return individual
 
     def check_twins(self, individual):

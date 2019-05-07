@@ -1,15 +1,16 @@
 from modeling import *
-import numpy as np
+from random import shuffle
 
 
 def create_individual(problem):
-    individual = np.array(range(problem.n_gift_types))
-    individual = problem.set_triplets(individual)
-    individual = problem.set_twins(individual)
+    individual = list(range(problem.n_gift_types))
 
     for i in range(problem.n_gift_quantity - 1):
-        individual = np.append(individual, range(problem.n_gift_types))
-    np.random.shuffle(individual)
+        individual += list(range(problem.n_gift_types))
+
+    individual = shuffle(individual)
+    individual = problem.set_triplets(individual)
+    individual = problem.set_twins(individual)
 
     return individual
 
