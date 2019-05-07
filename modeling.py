@@ -2,7 +2,8 @@ import math
 from random import randint, choice
 from fitness_function import avg_normalized_happiness
 
-class SantaProblem():
+
+class SantaProblem:
     def __init__(self, n_children, n_gift_types):
         self.n_children = n_children  # n children to give
         self.n_gift_types = n_gift_types  # n types of gifts available
@@ -13,7 +14,15 @@ class SantaProblem():
         self.n_twins = math.ceil(0.04 * n_children / 2.) * 2  # 1.5% of all population, rounded to the closest number
 
     def __repr__(self):
-        return "Santa Gifting Problem: {} types of presents for {} children".format(self.n_gift_types, self.n_children)
+        return "Santa Gifting Problem: {} types of gifts for {} children".format(self.n_gift_types, self.n_children)
+
+    def set_triplets(self, individual):
+        for t in range(0, self.n_triplets, 3):
+            value = choice([individual[t], individual[t + 1], individual[t + 2]])
+            individual[t] = value
+            individual[t + 1] = value
+            individual[t + 2] = value
+        return individual
 
     def check_triplets(self, individual):
         for t1 in range(0, self.n_triplets, 3):
@@ -24,6 +33,13 @@ class SantaProblem():
                 return False
 
         return True
+
+    def set_twins(self, individual):
+        for t in range(self.n_triplets, self.n_triplets + self.n_twins, 2):
+            value = choice([individual[t], individual[t + 1]])
+            individual[t] = value
+            individual[t + 1] = value
+        return individual
 
     def check_twins(self, individual):
         for t1 in range(self.n_triplets, self.n_triplets + self.n_twins, 2):

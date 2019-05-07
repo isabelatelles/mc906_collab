@@ -4,16 +4,22 @@ import numpy as np
 
 def create_individual(problem):
     individual = np.array(range(problem.n_gift_types))
+    individual = problem.set_triplets(individual)
+    individual = problem.set_twins(individual)
+
     for i in range(problem.n_gift_quantity - 1):
         individual = np.append(individual, range(problem.n_gift_types))
     np.random.shuffle(individual)
-    return
+
+    return individual
 
 
 def create_starting_population(size):
     starting_population = list()
+
     for i in range(size):
         starting_population.append(create_individual(p))
+
     return starting_population
 
 
