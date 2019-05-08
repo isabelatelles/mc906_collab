@@ -23,10 +23,10 @@ def avg_normalized_happiness(problem, individual):
     child_pref = pd.read_csv('dataset/created_gift_goodkids_' + str(problem.n_children) + '_' +
                              str(problem.n_gift_types) + '.csv', header=None).drop(0, 1).values
 
-    # check if number of each gift exceeds problem.n_gift_quantity
+    # check if number of each gift exceeds problem.n_gift_per_type
     gift_counts = Counter(elem for elem in individual)
     for count in gift_counts.values():
-        assert count <= problem.n_gift_quantity
+        assert count <= problem.n_gift_per_type
 
     # check if triplets have the same gift
     for t1 in np.arange(0, problem.n_triplets, 3):
@@ -72,18 +72,18 @@ def avg_normalized_happiness(problem, individual):
     print('normalized child happiness=',
           float(total_child_happiness) / (float(problem.n_children) * float(max_child_happiness)),
           ', normalized gift happiness',
-          np.mean(total_gift_happiness) / float(max_gift_happiness * problem.n_gift_quantity))
+          np.mean(total_gift_happiness) / float(max_gift_happiness * problem.n_gift_per_type))
 
     # to avoid float rounding error
     # find common denominator
     # NOTE: I used this code to experiment different parameters, so it was necessary to get the multiplier
     # Note: You should hard-code the multipler to speed up, now that the parameters are finalized
     denominator1 = problem.n_children * max_child_happiness
-    denominator2 = problem.n_gift_quantity * max_gift_happiness * problem.n_gift_types
+    denominator2 = problem.n_gift_per_type * max_gift_happiness * problem.n_gift_types
     common_denom = lcm(denominator1, denominator2)
     multiplier = common_denom / denominator1
 
     # # usually denom1 > demon2
     return float(math.pow(total_child_happiness * multiplier, 3) + math.pow(np.sum(total_gift_happiness), 3)) / float(
         math.pow(common_denom, 3))
-    # return math.pow(float(total_child_happiness)/(float(n_children)*float(max_child_happiness)),2) + math.pow(np.mean(total_gift_happiness) / float(max_gift_happiness*problem.n_gift_quantity),2)
+    # return math.pow(float(total_child_happiness)/(float(n_children)*float(max_child_happiness)),2) + math.pow(np.mean(total_gift_happiness) / float(max_gift_happiness*problem.n_gift_per_type),2)
