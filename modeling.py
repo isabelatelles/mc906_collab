@@ -20,7 +20,10 @@ class SantaProblem:
     def set_triplets_and_twins(self, individual):
         # Set triplets' gifts
         for t in range(0, self.n_triplets, 3):
+            # Count the number of gifts already used by now
             gift_counts = dict()
+
+            # Find a type of gift available to give to the triplets
             for index, value in enumerate(individual[t:]):
                 if value not in gift_counts:
                     gift_counts[value] = 3
@@ -44,6 +47,7 @@ class SantaProblem:
 
         # Set twins' gifts
         for t in range(self.n_triplets, self.n_triplets + self.n_twins, 2):
+            # Find a type of gift available to give to the twins
             for index, value in enumerate(individual[t:]):
                 if value not in gift_counts:
                     gift_counts[value] = 2
