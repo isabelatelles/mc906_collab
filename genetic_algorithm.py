@@ -1,5 +1,5 @@
 from modeling import *
-from random import shuffle
+from random import shuffle, randint, sample
 
 
 def create_individual(problem):
@@ -21,6 +21,16 @@ def create_starting_population(problem, size):
         starting_population.append(create_individual(problem))
 
     return starting_population
+
+
+def selection_by_tournament(problem, population):
+    tournament_dimension = randint(0, len(population))
+    individuals = sample(population, tournament_dimension)
+    scores = [problem.calculate_fitness(individual) for individual in individuals]
+    index_selected_individual = scores.index(max(scores))
+    selected_individual = individuals[index_selected_individual]
+
+    return selected_individual
 
 
 p = SantaProblem(200, 40)
