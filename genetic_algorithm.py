@@ -14,11 +14,11 @@ def create_individual(problem):
     return individual
 
 
-def create_starting_population(size):
+def create_starting_population(problem, size):
     starting_population = list()
 
     for i in range(size):
-        starting_population.append(create_individual(p))
+        starting_population.append(create_individual(problem))
 
     return starting_population
 
@@ -26,4 +26,4 @@ def create_starting_population(size):
 p = SantaProblem(200, 40)
 
 population_size = 50
-starting_population = create_starting_population(population_size)
+starting_population = create_starting_population(p, population_size)
