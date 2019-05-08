@@ -123,5 +123,5 @@ class SantaProblem:
 
         return individual
 
-    def fitness_function(self, individual):
+    def calculate_fitness(self, individual):
         return avg_normalized_happiness(self, individual)
