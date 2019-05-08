@@ -54,13 +54,17 @@ def avg_normalized_happiness(problem, individual):
         assert gift_id < problem.n_gift_types
         assert child_id >= 0
         assert gift_id >= 0
-        child_happiness = (problem.n_gift_pref - np.where(gift_pref[child_id] == gift_id)[0]) * ratio_child_happiness
-        if not child_happiness:
-            child_happiness = -1
 
-        gift_happiness = (problem.n_child_pref - np.where(child_pref[gift_id] == child_id)[0]) * ratio_gift_happiness
-        if not gift_happiness:
-            gift_happiness = -1
+        child_happiness = -1
+        if np.any(np.where(gift_pref[child_id] == gift_id)):
+            child_happiness = (problem.n_gift_pref - np.where(gift_pref[child_id] == gift_id)[0][0])\
+                              * ratio_child_happiness
+
+        gift_happiness = -1
+        if np.any(np.where(child_pref[gift_id] == child_id)):
+            gift_happiness = (problem.n_child_pref - np.where(child_pref[gift_id] == child_id)[0][0])\
+                             * ratio_gift_happiness
+
 
         total_child_happiness += child_happiness
         total_gift_happiness[gift_id] += gift_happiness
