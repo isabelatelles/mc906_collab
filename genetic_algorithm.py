@@ -5,7 +5,7 @@ from random import shuffle
 def create_individual(problem):
     individual = list(range(problem.n_gift_types))
 
-    for i in range(problem.n_gift_quantity - 1):
+    for i in range(problem.n_gift_per_type - 1):
         individual += list(range(problem.n_gift_types))
 
     shuffle(individual)

@@ -8,7 +8,7 @@ class SantaProblem:
     def __init__(self, n_children, n_gift_types):
         self.n_children = n_children  # n children to give
         self.n_gift_types = n_gift_types  # n types of gifts available
-        self.n_gift_quantity = int(n_children/n_gift_types)  # each type of gifts are limited to this quantity
+        self.n_gift_per_type = int(n_children/n_gift_types)  # each type of gifts are limited to this quantity
         self.n_gift_pref = int(0.2 * n_gift_types)  # number of gifts a child ranks
         self.n_child_pref = int(0.1 * n_children)  # number of children a gift ranks
         self.n_triplets = math.ceil(0.015 * n_children / 3.) * 3  # 1.5% of all population, rounded to the closest number
@@ -25,7 +25,7 @@ class SantaProblem:
                 if value not in gift_counts:
                     gift_counts[value] = 3
                     break
-                elif self.n_gift_quantity - gift_counts[value] >= 3:
+                elif self.n_gift_per_type - gift_counts[value] >= 3:
                     gift_counts[value] += 3
                     break
 
@@ -48,7 +48,7 @@ class SantaProblem:
                 if value not in gift_counts:
                     gift_counts[value] = 2
                     break
-                elif self.n_gift_quantity - gift_counts[value] >= 2:
+                elif self.n_gift_per_type - gift_counts[value] >= 2:
                     gift_counts[value] += 2
                     break
 
