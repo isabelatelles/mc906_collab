@@ -1,6 +1,7 @@
 import math
 from random import randint, choice
 from fitness_function import avg_normalized_happiness
+from collections import Counter
 
 
 class SantaProblem:
@@ -16,28 +17,48 @@ class SantaProblem:
     def __repr__(self):
         return "Santa Gifting Problem: {} types of gifts for {} children".format(self.n_gift_types, self.n_children)
 
-    def set_triplets(self, individual):
+    def set_triplets_and_twins(self, individual):
+        # Set triplets' gifts
         for t in range(0, self.n_triplets, 3):
+            gift_counts = dict()
             for index, value in enumerate(individual[t:]):
-                count = 0
-                for gift_id in individual[:t]:
-                    if value == gift_id:
-                        count += 1
-                if 5 - count >= 3:
+                if value not in gift_counts:
+                    gift_counts[value] = 3
+                    break
+                elif self.n_gift_quantity - gift_counts[value] >= 3:
+                    gift_counts[value] += 3
                     break
 
+            index += t
             if individual[t] != value:
-                new_index = individual[index:].index(value) + index
-                individual[new_index] = individual[t]
-                individual[t] = value
+                index = individual[index + 1:].index(value) + index + 1
+                individual[index], individual[t] = individual[t], value
             if individual[t + 1] != value:
-                new_index = individual[index:].index(value) + index
-                individual[new_index] = individual[t]
-                individual[t + 1] = value
+                index = individual[index + 1:].index(value) + index + 1
+                individual[index], individual[t + 1] = individual[t + 1], value
+            else:
+                index += 1
             if individual[t + 2] != value:
-                new_index = individual[index:].index(value) + index
-                individual[new_index] = individual[t]
-                individual[t + 2] = value
+                index = individual[index + 1:].index(value) + index + 1
+                individual[index], individual[t + 2] = individual[t + 2], value
+
+        # Set twins' gifts
+        for t in range(self.n_triplets, self.n_triplets + self.n_twins, 2):
+            for index, value in enumerate(individual[t:]):
+                if value not in gift_counts:
+                    gift_counts[value] = 2
+                    break
+                elif self.n_gift_quantity - gift_counts[value] >= 2:
+                    gift_counts[value] += 2
+                    break
+
+            index += t
+            if individual[t] != value:
+                index = individual[index + 1:].index(value) + index + 1
+                individual[index], individual[t] = individual[t], value
+            if individual[t + 1] != value:
+                index = individual[index + 1:].index(value) + index + 1
+                individual[index], individual[t + 1] = individual[t + 1], value
 
         return individual
 
@@ -50,27 +71,6 @@ class SantaProblem:
                 return False
 
         return True
-
-    def set_twins(self, individual):
-        for t in range(self.n_triplets, self.n_triplets + self.n_twins, 2):
-            for index, value in enumerate(individual[t:]):
-                count = 0
-                for gift_id in individual[:t]:
-                    if value == gift_id:
-                        count += 1
-                if 5 - count >= 2:
-                    break
-
-            if individual[t] != value:
-                new_index = individual[index:].index(value) + index
-                individual[new_index] = individual[t]
-                individual[t] = value
-            if individual[t + 1] != value:
-                new_index = individual[index:].index(value) + index
-                individual[new_index] = individual[t]
-                individual[t + 1] = value
-
-        return individual
 
     def check_twins(self, individual):
         for t1 in range(self.n_triplets, self.n_triplets + self.n_twins, 2):

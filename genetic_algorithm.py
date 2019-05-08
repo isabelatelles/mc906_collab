@@ -8,9 +8,8 @@ def create_individual(problem):
     for i in range(problem.n_gift_quantity - 1):
         individual += list(range(problem.n_gift_types))
 
-    individual = shuffle(individual)
-    individual = problem.set_triplets(individual)
-    individual = problem.set_twins(individual)
+    shuffle(individual)
+    individual = problem.set_triplets_and_twins(individual)
 
     return individual
 
