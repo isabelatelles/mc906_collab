@@ -82,7 +82,36 @@ class SantaProblem:
         return True
 
     def crossover(self, individual_1, individual_2):
-        return individual_1
+        # Set the single point index to make the crossover
+        single_point_index = self.n_children//2
+
+        # Copy the first part of the individual 1
+        new_individual = individual_1[:single_point_index].copy()
+
+        # Count the remaining gifts to be distributed
+        counter = [0] * self.n_gift_types
+        for c in individual_1[single_point_index:]:
+            counter[c] = counter[c] + 1
+
+        # Copy as many gifts from the 2nd part of individual 2 as possible
+        empty_index = []
+        for i in range(single_point_index, self.n_children):
+            if counter[individual_2[i]] > 0:
+                new_individual.append(individual_2[i])
+                counter[individual_2[i]] = counter[individual_2[i]] - 1
+            else:
+                new_individual.append(None)
+                empty_index.append(i)
+
+        empty_index.reverse()
+
+        # Fill the empty index with available gifts
+        for c in individual_1[single_point_index:]:
+            if counter[c] > 0:
+                new_individual[empty_index.pop()] = c
+                counter[c] = counter[c] - 1
+
+        return new_individual
 
     def mutation(self, individual):
         first = True
