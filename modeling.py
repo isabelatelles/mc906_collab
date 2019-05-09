@@ -1,7 +1,5 @@
 import math
 from random import randint, choice
-from fitness_function import avg_normalized_happiness
-from collections import Counter
 
 
 class SantaProblem:
@@ -126,6 +124,3 @@ class SantaProblem:
             first = False
 
         return individual
-
-    def calculate_fitness(self, individual):
-        return avg_normalized_happiness(self, individual)
