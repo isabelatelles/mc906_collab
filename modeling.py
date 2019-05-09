@@ -1,5 +1,6 @@
 import math
-from random import randint, choice
+from random import randint, choice, shuffle
+from collections import Counter
 
 
 class SantaProblem:
@@ -116,11 +117,61 @@ class SantaProblem:
         return new_individual
 
     def mutation(self, individual):
-        mutated = individual.copy()
         i = randint(0, self.n_children - 1)
-        j = choice(list(range(0, i)) + list(range(i + 1, self.n_children - 1)))
-        mutated[i], mutated[j] = mutated[j], mutated[i]
-        if self.check_triplets(mutated) is False or self.check_twins(mutated) is False:
-            return individual
+
+        not_only_child = None
+        # Select any index if i is not a triplet/twin, otherwise select an index out of the range of the triplets/twins
+        if i >= self.n_triplets + self.n_twins:
+            j = choice(list(range(0, i)) + list(range(i + 1, self.n_children)))
+            # j = choice(list(range(self.n_triplets + self.n_twins, self.n_children)))
+            if j < self.n_triplets + self.n_twins:
+                not_only_child = j
+            else:
+                # Swap gifts between children since they are not twins or triplets
+                individual[i], individual[j] = individual[j], individual[i]
         else:
-            return mutated
+            not_only_child = i
+
+        if not_only_child:
+            # Find the gifts that are available to swap
+            gift_counts = Counter(elem for elem in individual[self.n_triplets + self.n_twins:]).most_common()
+            available_gifts = [count[0] for count in gift_counts if (not_only_child < self.n_triplets and count[1] > 2)
+                              or (not_only_child < self.n_triplets + self.n_twins and count[1] > 1)]
+
+            # Find the indexes of each child that currently receives each available gift
+            children_of_gifts = dict()
+            for gift in available_gifts:
+                children_of_gifts[gift] = [index + self.n_triplets + self.n_twins for index, value in
+                                           enumerate(individual[self.n_triplets + self.n_twins:]) if value == gift]
+
+            # Choose a gift randomly and then the available children to swap its gifts
+            gift_chosen = choice(available_gifts)
+            available_children = children_of_gifts[gift_chosen]
+            shuffle(available_children)
+
+            if not_only_child < self.n_triplets:
+                if not_only_child % 3 == 0:
+                    min_index = not_only_child
+                    max_index = not_only_child + 3
+                elif not_only_child - 1 % 3 == 0:
+                    min_index = not_only_child - 1
+                    max_index = not_only_child + 2
+                else:
+                    min_index = not_only_child - 2
+                    max_index = not_only_child + 1
+            elif not_only_child < self.n_triplets + self.n_twins:
+                if (not_only_child - self.n_triplets) % 2 == 0:
+                    min_index = not_only_child
+                    max_index = not_only_child + 2
+                else:
+                    min_index = not_only_child - 1
+                    max_index = not_only_child + 1
+
+            # Swap triplets/twins gifts with the gift of the available children
+            k = 0
+            for index in range(min_index, max_index):
+                individual[index], individual[available_children[k]] = individual[available_children[k]],\
+                                                                       individual[index]
+                k += 1
+
+        return individual
