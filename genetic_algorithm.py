@@ -74,6 +74,6 @@ if __name__ == '__main__':
             new_population.append(child_2)
         population = new_population
 
-    print('Final best score: ' + str(max(best_scores) + ', Generation: ' + str(best_scores.index(max(best_scores)))))
+    print('Final best score: ' + str(max(best_scores)) + ', Generation: ' + str(best_scores.index(max(best_scores))))
 
     plot(worst_scores, avg_scores, best_scores, max_generation)
