@@ -1,5 +1,6 @@
 from modeling import *
 from fitness_function import *
+from plot import *
 from random import shuffle, randint, sample, random
 
 
@@ -43,9 +44,11 @@ if __name__ == '__main__':
 
     population_size = 50
     max_generation = 100
-    mutation_rate = 0.6
+    mutation_rate = 0.02
 
     best_scores = list()
+    avg_scores = list()
+    worst_scores = list()
 
     population = create_starting_population(santa_problem, population_size)
 
@@ -53,6 +56,8 @@ if __name__ == '__main__':
         scores = [calculate_fitness(santa_problem, individual) for individual in population]
         best_score = max(scores)
         best_scores.append(best_score)
+        avg_scores.append(sum(scores)/len(scores))
+        worst_scores.append(min(scores))
         print('Generation: ' + str(generation) + ', Best score: ' + str(best_score))
 
         new_population = [population[scores.index(best_score)]]
@@ -69,4 +74,6 @@ if __name__ == '__main__':
             new_population.append(child_2)
         population = new_population
 
-    print('Final best score: ' + str(max(best_scores)) + ', Generation: ' + str(best_scores.index(max(best_scores))))
+    print('Final best score: ' + str(max(best_scores) + ', Generation: ' + str(best_scores.index(max(best_scores)))))
+
+    plot(worst_scores, avg_scores, best_scores, max_generation)
