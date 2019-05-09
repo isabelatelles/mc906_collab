@@ -135,8 +135,10 @@ class SantaProblem:
         if not_only_child:
             # Find the gifts that are available to swap
             gift_counts = Counter(elem for elem in individual[self.n_triplets + self.n_twins:]).most_common()
-            available_gifts = [count[0] for count in gift_counts if (not_only_child < self.n_triplets and count[1] > 2)
-                              or (not_only_child < self.n_triplets + self.n_twins and count[1] > 1)]
+            if not_only_child < self.n_triplets:
+                available_gifts = [count[0] for count in gift_counts if count[1] > 2]
+            else:
+                available_gifts = [count[0] for count in gift_counts if count[1] > 1]
 
             # Find the indexes of each child that currently receives each available gift
             children_of_gifts = dict()
@@ -159,7 +161,7 @@ class SantaProblem:
                 else:
                     min_index = not_only_child - 2
                     max_index = not_only_child + 1
-            elif not_only_child < self.n_triplets + self.n_twins:
+            else:
                 if (not_only_child - self.n_triplets) % 2 == 0:
                     min_index = not_only_child
                     max_index = not_only_child + 2
