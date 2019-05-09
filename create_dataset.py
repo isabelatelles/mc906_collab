@@ -7,7 +7,6 @@ triplets = math.ceil(0.015 * n_children / 3.) * 3
 twins = math.ceil(0.04 * n_children / 2.) * 2
 
 n_gift_type = 40
-n_gift_quantity = 3
 
 n_gift_pref = int(0.2 * n_gift_type)
 n_child_pref = int(0.1 * n_children)
