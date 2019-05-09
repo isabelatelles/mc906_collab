@@ -1,5 +1,4 @@
 from modeling import *
-from fitness_function import *
 from plot import *
 from random import shuffle, randint, sample, random
 
@@ -26,7 +25,7 @@ def create_starting_population(problem, size):
 
 
 def calculate_fitness(problem, individual):
-    return avg_normalized_happiness(problem, individual)
+    return problem.fitness_function.avg_normalized_happiness(individual)
 
 
 def selection_by_tournament(problem, population):

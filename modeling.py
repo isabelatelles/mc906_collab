@@ -1,6 +1,7 @@
 import math
 from random import randint, choice, shuffle
 from collections import Counter
+from fitness_function import *
 
 
 class SantaProblem:
@@ -12,6 +13,7 @@ class SantaProblem:
         self.n_child_pref = int(0.1 * n_children)  # number of children a gift ranks
         self.n_triplets = math.ceil(0.015 * n_children / 3.) * 3  # 1.5% of all population, rounded to the closest number
         self.n_twins = math.ceil(0.04 * n_children / 2.) * 2  # 4% of all population, rounded to the closest number
+        self.fitness_function = FitnessFunction(self)
 
     def __repr__(self):
         return "Santa Gifting Problem: {} types of gifts for {} children".format(self.n_gift_types, self.n_children)
