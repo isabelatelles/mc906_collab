@@ -19,9 +19,9 @@ def avg_normalized_happiness(problem, individual):
     ratio_child_happiness = 2
 
     gift_pref = pd.read_csv('dataset/created_child_wishlist_' + str(problem.n_children) + '_' +
-                            str(problem.n_gift_types) + '.csv', header=None).drop(0, 1).values
+                            str(problem.n_gift_types) + '.csv', header=None).values
     child_pref = pd.read_csv('dataset/created_gift_goodkids_' + str(problem.n_children) + '_' +
-                             str(problem.n_gift_types) + '.csv', header=None).drop(0, 1).values
+                             str(problem.n_gift_types) + '.csv', header=None).values
 
     # check if number of each gift exceeds problem.n_gift_per_type
     gift_counts = Counter(elem for elem in individual)
@@ -69,10 +69,10 @@ def avg_normalized_happiness(problem, individual):
         total_child_happiness += child_happiness
         total_gift_happiness[gift_id] += gift_happiness
 
-    print('normalized child happiness=',
-          float(total_child_happiness) / (float(problem.n_children) * float(max_child_happiness)),
-          ', normalized gift happiness',
-          np.mean(total_gift_happiness) / float(max_gift_happiness * problem.n_gift_per_type))
+    # print('normalized child happiness=',
+    #       float(total_child_happiness) / (float(problem.n_children) * float(max_child_happiness)),
+    #       ', normalized gift happiness',
+    #       np.mean(total_gift_happiness) / float(max_gift_happiness * problem.n_gift_per_type))
 
     # to avoid float rounding error
     # find common denominator
