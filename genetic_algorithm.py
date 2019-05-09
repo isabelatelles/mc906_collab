@@ -43,7 +43,7 @@ if __name__ == '__main__':
 
     population_size = 50
     max_generation = 100
-    mutation_rate = 0.02
+    mutation_rate = 0.6
 
     best_scores = list()
 
