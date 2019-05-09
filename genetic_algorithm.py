@@ -55,13 +55,17 @@ if __name__ == '__main__':
         print('Generation: ' + str(generation) + ', Best score: ' + str(best_score))
 
         new_population = [population[scores.index(best_score)]]
-        for i in range(population_size - 1):
+        for i in range(population_size/2):
             parent_1 = selection_by_tournament(santa_problem, population)
             parent_2 = selection_by_tournament(santa_problem, population)
-            child = santa_problem.crossover(parent_1, parent_2)
+            child_1 = santa_problem.crossover(parent_1, parent_2)
+            child_2 = santa_problem.crossover(parent_2, parent_1)
             if random() < mutation_rate:
-                child = santa_problem.mutation(child)
-            new_population.append(child)
+                child_1 = santa_problem.mutation(child_1)
+            new_population.append(child_1)
+            if random() < mutation_rate:
+                child_2 = santa_problem.mutation(child_2)
+            new_population.append(child_2)
         population = new_population
 
     print('Final best score: ' + str(max(best_scores) + ', Generation: ' + str(best_scores.index(max(best_scores)))))
