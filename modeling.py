@@ -118,8 +118,8 @@ class SantaProblem:
     def mutation(self, individual):
         first = True
         while first or self.check_triplets(individual) is False or self.check_twins(individual) is False:
-            i = randint(0, self.n_children)
-            j = choice(list(range(0, i)) + list(range(i + 1, self.n_children)))
+            i = randint(0, self.n_children - 1)
+            j = choice(list(range(0, i)) + list(range(i + 1, self.n_children - 1)))
             individual[i], individual[j] = individual[j], individual[i]
             first = False
 
