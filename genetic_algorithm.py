@@ -56,7 +56,7 @@ if __name__ == '__main__':
         print('Generation: ' + str(generation) + ', Best score: ' + str(best_score))
 
         new_population = [population[scores.index(best_score)]]
-        for i in range(population_size//2):
+        for i in range(population_size//2 - 1):
             parent_1 = selection_by_tournament(santa_problem, population)
             parent_2 = selection_by_tournament(santa_problem, population)
             child_1 = santa_problem.crossover(parent_1, parent_2)
