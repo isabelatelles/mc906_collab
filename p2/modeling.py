@@ -125,7 +125,6 @@ class SantaProblem:
         # Select any index if i is not a triplet/twin, otherwise select an index out of the range of the triplets/twins
         if i >= self.n_triplets + self.n_twins:
             j = choice(list(range(0, i)) + list(range(i + 1, self.n_children)))
-            # j = choice(list(range(self.n_triplets + self.n_twins, self.n_children)))
             if j < self.n_triplets + self.n_twins:
                 not_only_child = j
             else:
@@ -148,11 +147,12 @@ class SantaProblem:
                 children_of_gifts[gift] = [index + self.n_triplets + self.n_twins for index, value in
                                            enumerate(individual[self.n_triplets + self.n_twins:]) if value == gift]
 
-            # Choose a gift randomly and then the available children to swap its gifts
+            # Choose an available gift randomly and, therefore, the available children to swap its gifts
             gift_chosen = choice(available_gifts)
             available_children = children_of_gifts[gift_chosen]
             shuffle(available_children)
 
+            # Find the indexes of the triplets/twins that will swap its gifts
             if not_only_child < self.n_triplets:
                 if not_only_child % 3 == 0:
                     min_index = not_only_child
