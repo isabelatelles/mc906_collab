@@ -53,7 +53,8 @@ class FitnessFunction():
             assert gift_id >= 0
 
     def avg_normalized_happiness(self, individual):
-
+        self.make_assertions(individual)
+        
         total_children_happiness = 0
         total_gift_happiness = np.zeros(self.problem.n_gift_types)
 
