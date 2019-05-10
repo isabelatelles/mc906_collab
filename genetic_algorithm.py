@@ -41,19 +41,22 @@ def selection_by_tournament(problem, population):
 if __name__ == '__main__':
     santa_problem = SantaProblem(200, 40)
 
-    population_size = 50
-    max_generation = 100
-    mutation_rate = 0.02
+    population_size = 70
+    max_generation = 1000
+    mutation_rate = 0.65
 
     best_scores = list()
     avg_scores = list()
     worst_scores = list()
+
+    best_individuals = list()
 
     population = create_starting_population(santa_problem, population_size)
 
     for generation in range(max_generation):
         scores = [calculate_fitness(santa_problem, individual) for individual in population]
         best_score = max(scores)
+        best_individuals.append(population[scores.index(best_score)])
         best_scores.append(best_score)
         avg_scores.append(sum(scores)/len(scores))
         worst_scores.append(min(scores))
@@ -74,5 +77,6 @@ if __name__ == '__main__':
         population = new_population
 
     print('Final best score: ' + str(max(best_scores)) + ', Generation: ' + str(best_scores.index(max(best_scores))))
-
+    with open("best_ind.txt", "w") as f:
+        f.write(str(best_individuals[best_scores.index(max(best_scores))]))
     plot(worst_scores, avg_scores, best_scores, max_generation)
