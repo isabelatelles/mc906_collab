@@ -10,7 +10,7 @@ It creates a dataset based on the internal variables "n_children" and "n_gift_ty
 Execution:
     python3 genetic_algorithm.py
     
-It runs the algorithm based on the internal variables "n_children" and "n_gift_type". To change the dataset, these variables must be modified at the base code. Also, the dataset needs to exist and be at dataset/ folder.
+It runs the algorithm based on the internal variables "population_size", "max_generation" and "mutation_rate", besides "n_children" and "n_gift_type". To change the dataset, these variables must be modified at the base code. Also, the dataset needs to exist and be at dataset/ folder.
 
 ### fitness_function.py
 It holds a class that calculates the fitness function of the problem.
