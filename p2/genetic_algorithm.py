@@ -30,7 +30,7 @@ def calculate_fitness(problem, individual):
 
 def selection_by_tournament(population, scores):
     tournament_dimension = randint(2, len(population))
-    index_individuals = sample(list(enumerate(scores)), tournament_dimension)
+    index_individuals = sample(list(range(len(scores))), tournament_dimension)
     scores_individuals = [scores[index] for index in index_individuals]
     index_selected_individual = index_individuals[scores_individuals.index(max(scores_individuals))]
     selected_individual = population[index_selected_individual]
