@@ -50,6 +50,7 @@ if __name__ == '__main__':
     population_size = 70
     max_generation = 2000
     mutation_rate = 0.9
+    crossover_rate = 0.5
 
     best_scores = list()
     avg_scores = list()
@@ -72,8 +73,14 @@ if __name__ == '__main__':
         for i in range(population_size//2 - 1):
             parent_1 = selection_by_tournament(population, scores)
             parent_2 = selection_by_tournament(population, scores)
-            child_1 = santa_problem.crossover(parent_1, parent_2)
-            child_2 = santa_problem.crossover(parent_2, parent_1)
+            if random() < crossover_rate:
+                child_1 = santa_problem.crossover(parent_1, parent_2)
+            else:
+                child_1 = parent_1.copy()
+            if random() < crossover_rate:
+                child_2 = santa_problem.crossover(parent_2, parent_1)
+            else:
+                child_2 = parent_2.copy()
             if random() < mutation_rate:
                 child_1 = santa_problem.mutation(child_1)
             new_population.append(child_1)
