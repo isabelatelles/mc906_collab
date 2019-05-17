@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 
+
 def plot(worst_scores, avg_scores, best_scores, max_generation):
     plt.plot(range(max_generation), best_scores, "g-", label = "Best")
     plt.plot(range(max_generation), avg_scores, "b-", label = "Average")
@@ -8,3 +9,4 @@ def plot(worst_scores, avg_scores, best_scores, max_generation):
     plt.xlabel("Generation")
     plt.legend(loc='upper left')
     plt.show()
+    plt.savefig('plot.png')
