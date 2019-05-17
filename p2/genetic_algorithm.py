@@ -38,6 +38,12 @@ def selection_by_tournament(population, scores):
     return selected_individual
 
 
+def print_twice(*args,**kwargs):
+    print(*args, **kwargs)
+    with open('output.txt', 'a') as f:
+        print(file=f, *args, **kwargs)
+
+
 if __name__ == '__main__':
     santa_problem = SantaProblem(200, 40)
 
@@ -60,8 +66,7 @@ if __name__ == '__main__':
         best_scores.append(best_score)
         avg_scores.append(sum(scores)/len(scores))
         worst_scores.append(min(scores))
-        with open("output.txt", "a") as f:
-            print('Generation: ' + str(generation) + ', Best score: ' + str(best_score), file=f)
+        print_twice('Generation: ' + str(generation) + ', Best score: ' + str(best_score))
 
         new_population = [population[scores.index(best_score)]]
         for i in range(population_size//2 - 1):
@@ -77,9 +82,7 @@ if __name__ == '__main__':
             new_population.append(child_2)
         population = new_population
 
-    with open("output.txt", "a") as f:
-        print('Final best score: ' + str(max(best_scores)) + ', Generation: ' +
-              str(best_scores.index(max(best_scores))), file=f)
+    print_twice('Final best score: ' + str(max(best_scores)) + ', Generation: ' + str(best_scores.index(max(best_scores))))
 
     with open("best_ind.txt", "w") as f:
         f.write(str(best_individuals[best_scores.index(max(best_scores))]))
