@@ -8,5 +8,4 @@ def plot(worst_scores, avg_scores, best_scores, max_generation):
     plt.ylabel("Scores")
     plt.xlabel("Generation")
     plt.legend(loc='upper left')
-    plt.show()
-    plt.savefig('plot.png')
+    plt.savefig('graph.png')
