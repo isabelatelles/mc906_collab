@@ -60,7 +60,8 @@ if __name__ == '__main__':
         best_scores.append(best_score)
         avg_scores.append(sum(scores)/len(scores))
         worst_scores.append(min(scores))
-        print('Generation: ' + str(generation) + ', Best score: ' + str(best_score))
+        with open("output.txt", "a") as f:
+            print('Generation: ' + str(generation) + ', Best score: ' + str(best_score), file=f)
 
         new_population = [population[scores.index(best_score)]]
         for i in range(population_size//2 - 1):
@@ -76,7 +77,10 @@ if __name__ == '__main__':
             new_population.append(child_2)
         population = new_population
 
-    print('Final best score: ' + str(max(best_scores)) + ', Generation: ' + str(best_scores.index(max(best_scores))))
+    with open("output.txt", "a") as f:
+        print('Final best score: ' + str(max(best_scores)) + ', Generation: ' +
+              str(best_scores.index(max(best_scores))), file=f)
+
     with open("best_ind.txt", "w") as f:
         f.write(str(best_individuals[best_scores.index(max(best_scores))]))
     plot(worst_scores, avg_scores, best_scores, max_generation)
