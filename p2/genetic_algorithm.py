@@ -29,7 +29,7 @@ def calculate_fitness(problem, individual):
 
 
 def selection_by_tournament(population, scores):
-    tournament_dimension = randint(2, len(population))
+    tournament_dimension = randint(2, len(population)//2)
     index_individuals = sample(list(range(len(scores))), tournament_dimension)
     scores_individuals = [scores[index] for index in index_individuals]
     index_selected_individual = index_individuals[scores_individuals.index(max(scores_individuals))]
@@ -48,8 +48,8 @@ if __name__ == '__main__':
     santa_problem = SantaProblem(200, 40)
 
     population_size = 70
-    max_generation = 1000
-    mutation_rate = 0.65
+    max_generation = 2000
+    mutation_rate = 0.9
 
     best_scores = list()
     avg_scores = list()
