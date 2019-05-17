@@ -68,8 +68,8 @@ if __name__ == '__main__':
         worst_scores.append(min(scores))
         print_twice('Generation: ' + str(generation) + ', Best score: ' + str(best_score))
 
-        new_population = [population[scores.index(best_score)]]
-        for i in range(population_size//2 - 1):
+        new_population = list()
+        for i in range(population_size//2):
             parent_1 = selection_by_tournament(population, scores)
             parent_2 = selection_by_tournament(population, scores)
             child_1 = santa_problem.crossover(parent_1, parent_2)
