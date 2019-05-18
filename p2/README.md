@@ -20,3 +20,11 @@ It contains the modeling of the problem, including the crossover and mutation me
 
 ### plot.py
 It plots a graph based on the best, worst and average individual of each generation of the algorithm.
+
+### results folders
+Each folder "cN_gM" represents the results of the algorithm when it was run with the configuration of N children and M gift types.
+
+The result files are the following:
+* best_ind: a .txt file with the representation of the best individual reached
+* output: a .txt file with the output generated while the algorithm was running, with the number of the generation and the score of its best individual.
+* graph: a .png file with the graph of scores x generation
