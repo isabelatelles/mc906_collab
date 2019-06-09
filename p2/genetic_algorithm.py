@@ -28,22 +28,28 @@ def calculate_fitness(problem, individual):
     return problem.fitness_function.avg_normalized_happiness(individual)
 
 
-def selection_by_tournament(problem, population):
-    tournament_dimension = randint(2, len(population))
-    individuals = sample(population, tournament_dimension)
-    scores = [calculate_fitness(problem, individual) for individual in individuals]
-    index_selected_individual = scores.index(max(scores))
-    selected_individual = individuals[index_selected_individual]
+def selection_by_tournament(population, scores):
+    tournament_dimension = randint(2, len(population)//2)
+    index_individuals = sample(list(range(len(scores))), tournament_dimension)
+    scores_individuals = [scores[index] for index in index_individuals]
+    index_selected_individual = index_individuals[scores_individuals.index(max(scores_individuals))]
+    selected_individual = population[index_selected_individual]
 
     return selected_individual
+
+
+def print_twice(*args,**kwargs):
+    print(*args, **kwargs)
+    with open('output.txt', 'a') as f:
+        print(file=f, *args, **kwargs)
 
 
 if __name__ == '__main__':
     santa_problem = SantaProblem(200, 40)
 
     population_size = 70
-    max_generation = 1000
-    mutation_rate = 0.65
+    max_generation = 2000
+    mutation_rate = 0.9
 
     best_scores = list()
     avg_scores = list()
@@ -60,12 +66,12 @@ if __name__ == '__main__':
         best_scores.append(best_score)
         avg_scores.append(sum(scores)/len(scores))
         worst_scores.append(min(scores))
-        print('Generation: ' + str(generation) + ', Best score: ' + str(best_score))
+        print_twice('Generation: ' + str(generation) + ', Best score: ' + str(best_score))
 
         new_population = [population[scores.index(best_score)]]
         for i in range(population_size//2 - 1):
-            parent_1 = selection_by_tournament(santa_problem, population)
-            parent_2 = selection_by_tournament(santa_problem, population)
+            parent_1 = selection_by_tournament(population, scores)
+            parent_2 = selection_by_tournament(population, scores)
             child_1 = santa_problem.crossover(parent_1, parent_2)
             child_2 = santa_problem.crossover(parent_2, parent_1)
             if random() < mutation_rate:
@@ -76,7 +82,8 @@ if __name__ == '__main__':
             new_population.append(child_2)
         population = new_population
 
-    print('Final best score: ' + str(max(best_scores)) + ', Generation: ' + str(best_scores.index(max(best_scores))))
+    print_twice('Final best score: ' + str(max(best_scores)) + ', Generation: ' + str(best_scores.index(max(best_scores))))
+
     with open("best_ind.txt", "w") as f:
         f.write(str(best_individuals[best_scores.index(max(best_scores))]))
     plot(worst_scores, avg_scores, best_scores, max_generation)
