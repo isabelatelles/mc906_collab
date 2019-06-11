@@ -9,6 +9,17 @@ from robot import Robot
 
 
 class go_to_goal():
+    ''' Class to configure the robot behavior to go to some defined goal
+
+        Args:
+        goal (float, float): The goal where the robot should walk to
+
+        Attributes:
+        goal(float, float): goal
+        NUM_SENSORS(int): number of sensors of the robot
+        max_speed(float): Maximum speed of each wheel
+        steps(float): Size of each step of the robot
+    '''
     def __init__(self, goal):
         self.goal = goal
         self.NUM_SENSORS = 8
@@ -16,12 +27,17 @@ class go_to_goal():
         self.steps = 0.01
 
     def init_fuzzy(self):
+        ''' Make the fuzzy setup by defining membership functions and rules
+        '''
         # Set the distances to avoid obstacles
         distance = []
         for i in range(0, self.NUM_SENSORS):
-            distance.append(ctrl.Antecedent(np.arange(0, 5.0, self.steps), 's' + str(i)))
-            distance[i]['close'] = fuzz.trapmf(distance[i].universe, [0.0, 0.0, 0.3, 0.6])
-            distance[i]['away'] = fuzz.trapmf(distance[i].universe, [0.3, 0.6, 5.0, 5.0])
+            distance.append(ctrl.Antecedent(np.arange(0, 5.0, self.steps), 's'
+                                                                    + str(i)))
+            distance[i]['close'] = fuzz.trapmf(distance[i].universe, [0.0, 0.0,
+                                                                      0.3, 0.6])
+            distance[i]['away'] = fuzz.trapmf(distance[i].universe, [0.3, 0.6,
+                                                                      5.0, 5.0])
 
         # Set the direction to align the robot to its goal
         direction = ctrl.Antecedent(np.arange(-pi, pi, 0.0001), "direction")
@@ -29,47 +45,77 @@ class go_to_goal():
         direction['right'] = fuzz.trimf(direction.universe, [0, pi/2, pi])
         direction['front'] = fuzz.trimf(direction.universe, [-pi/2, 0, pi/2])
 
-        v_left = ctrl.Consequent(np.arange(-self.max_speed, 1.0 + self.max_speed, 0.01), 'vl')
-        v_right = ctrl.Consequent(np.arange(-self.max_speed, 1.0 + self.max_speed, 0.01), 'vr')
+        # Define available velocities for each wheel
+        v_left = ctrl.Consequent(np.arange(-self.max_speed, 1.0 +
+        self.max_speed, 0.01), 'vl')
+        v_right = ctrl.Consequent(np.arange(-self.max_speed, 1.0 +
+        self.max_speed, 0.01), 'vr')
 
-        v_left['positive'] = fuzz.trimf(v_left.universe, [0.0, self.max_speed - 0.1, self.max_speed - 0.1])
-        v_left['negative'] = fuzz.trimf(v_left.universe, [-self.max_speed, -self.max_speed, 0.0])
-        v_right['positive'] = fuzz.trimf(v_left.universe, [0.0, self.max_speed, self.max_speed])
-        v_right['negative'] = fuzz.trimf(v_left.universe, [-self.max_speed + 0.1, -self.max_speed + 0.1, 0.0])
+        # Define the membership functions for the wheels speed
+        v_left['positive'] = fuzz.trimf(v_left.universe, [0.0, self.max_speed
+                                                   - 0.1, self.max_speed - 0.1])
+        v_left['negative'] = fuzz.trimf(v_left.universe, [-self.max_speed,
+                                                          -self.max_speed, 0.0])
+        v_right['positive'] = fuzz.trimf(v_left.universe, [0.0, self.max_speed,
+                                                                self.max_speed])
+        v_right['negative'] = fuzz.trimf(v_left.universe, [-self.max_speed
+                                             + 0.1, -self.max_speed + 0.1, 0.0])
 
         # Group sensor reading by its positions
-        far_from_obstacles = distance[0]['away'] & distance[1]['away'] & distance[2]['away'] & distance[3]['away'] & distance[4]['away'] & distance[5]['away'] & distance[6]['away'] & distance[7]['away']
-        obstacle_on_right = distance[4]['close'] | distance[5]['close'] | distance[6]['close'] | distance[7]['close']
-        obstable_on_left = distance[0]['close'] | distance[1]['close'] | distance[2]['close'] | distance[3]['close']
-        obstacle_in_front = distance[2]['close'] | distance[3]['close'] | distance[4]['close'] | distance[5]['close']
+        far_from_obstacles = distance[0]['away'] & distance[1]['away'] & \
+                             distance[2]['away'] & distance[3]['away'] & \
+                             distance[4]['away'] & distance[5]['away'] & \
+                             distance[6]['away'] & distance[7]['away']
+        obstacle_on_right = distance[4]['close'] | distance[5]['close'] | \
+                            distance[6]['close'] | distance[7]['close']
+        obstable_on_left = distance[0]['close'] | distance[1]['close'] | \
+                           distance[2]['close'] | distance[3]['close']
+        obstacle_in_front = distance[2]['close'] | distance[3]['close'] | \
+                            distance[4]['close'] | distance[5]['close']
 
-        #Rules for left wheel
-            #Rules to avoid obstacles and don't get stuck due to confliting rules (obstacle + alignment)
+        # Rules for left wheel
+            # Rules to avoid obstacles and don't get stuck due to confliting
+            # rules (obstacle + alignment)
         rule_l1 = ctrl.Rule(obstable_on_left, v_left['positive'])
-        rule_l2 = ctrl.Rule(obstacle_on_right & obstacle_in_front, v_left['negative'])
-        rule_l3 = ctrl.Rule(obstacle_on_right & ~ obstacle_in_front, v_left['positive'])
+        rule_l2 = ctrl.Rule(obstacle_on_right & obstacle_in_front,
+                                                             v_left['negative'])
+        rule_l3 = ctrl.Rule(obstacle_on_right & ~ obstacle_in_front,
+                                                             v_left['positive'])
             # Rules to align the robot to its goal and walk towards it
-        rule_l4 = ctrl.Rule(far_from_obstacles & (direction['front'] | direction['right']), v_left['positive'])
-        rule_l5 = ctrl.Rule(far_from_obstacles & direction['left'], v_left['negative'])
-        #rule_l3 = ctrl.Rule(direction['front'] | direction['right'], v_left['positive'])
-        #rule_l4 = ctrl.Rule(direction['left'], v_left['negative'])
+        rule_l4 = ctrl.Rule(far_from_obstacles & (direction['front'] |
+                                        direction['right']), v_left['positive'])
+        rule_l5 = ctrl.Rule(far_from_obstacles & direction['left'],
+                                                             v_left['negative'])
 
-        #Rules for right wheel
-            #Rules to avoid obstacles and don't get stuck due to confliting rules (obstacle + alignment)
-        rule_r1 = ctrl.Rule(obstable_on_left & obstacle_in_front, v_right['negative'])
-        rule_r2 = ctrl.Rule(obstable_on_left & ~ obstacle_in_front, v_right['positive'])
+        # Rules for right wheel
+            # Rules to avoid obstacles and don't get stuck due to confliting
+            # rules (obstacle + alignment)
+        rule_r1 = ctrl.Rule(obstable_on_left & obstacle_in_front,
+                                                            v_right['negative'])
+        rule_r2 = ctrl.Rule(obstable_on_left & ~ obstacle_in_front,
+                                                            v_right['positive'])
         rule_r3 = ctrl.Rule(obstacle_on_right, v_right['positive'])
             # Rules to align the robot to its goal and walk towards it
-        rule_r4 = ctrl.Rule(far_from_obstacles & (direction['front'] | direction['left']), v_right['positive'])
-        rule_r5 = ctrl.Rule(far_from_obstacles & direction['right'], v_right['negative'])
-        #rule_r3 = ctrl.Rule(direction['front'] | direction['left'], v_right['positive'])
-        #rule_r4 = ctrl.Rule(direction['right'], v_right['negative'])
+        rule_r4 = ctrl.Rule(far_from_obstacles & (direction['front'] |
+                                        direction['left']), v_right['positive'])
+        rule_r5 = ctrl.Rule(far_from_obstacles & direction['right'],
+                                                            v_right['negative'])
 
-        vel_ctrl = ctrl.ControlSystem([rule_l1, rule_l2, rule_l3, rule_l4, rule_l5, rule_r1, rule_r2, rule_r3, rule_r4, rule_r5])
-        #vel_ctrl = ctrl.ControlSystem([rule_l3, rule_l4, rule_r3, rule_r4])
+        vel_ctrl = ctrl.ControlSystem([rule_l1, rule_l2, rule_l3, rule_l4,
+                          rule_l5, rule_r1, rule_r2, rule_r3, rule_r4, rule_r5])
+
         self.fuzzy_system = ctrl.ControlSystemSimulation(vel_ctrl)
 
     def _sum_angles(self, a, b):
+        ''' Sum angles and convert the result to [-pi, pi) interval.
+
+            Args:
+            a(float): 1st angle to sum. Needs to be in [-pi, pi) interval
+            b(float): 2nd angle to sum. Needs to be in [-pi, pi) interval
+
+            Returns:
+            float: angle in [-pi, pi) interval.
+        '''
         angle_1 = a + 2*pi
         angle_2 = b + 2*pi
         result = (angle_1 + angle_2) % (2*pi)
@@ -79,6 +125,18 @@ class go_to_goal():
             return result - 2*pi
 
     def get_vel(self, dist, pos, orient):
+        ''' Get the velocity of each wheel based on the fuzzy system configured
+            at "self.init_fuzzy()".
+
+            Args:
+            dist(float list): the distance read in each sensor of the robot
+            pos(float, float, float): position of the robot
+            orient(float, float, float): Array with the euler angles (alpha,
+            beta and gamma) to describe the robot orientation
+
+            Returns:
+            [float, float]: velocities of the left wheel and the right wheel
+        '''
         # Calculate the angle between the goal and the robot's current position
         a = atan2(pos[1] - self.goal[1], self.goal[0] - pos[0])
         # Get the angle the robot needs to rotate
@@ -93,7 +151,15 @@ class go_to_goal():
         return [self.fuzzy_system.output['vl'], self.fuzzy_system.output['vr']]
 
     def goal_test(self, position):
-        # Compares the robot position and the goal, assuming a 0.05 threshold
+        ''' Test if the robot reached the goal
+
+            Args:
+            position(float, float, float): position of the robot
+
+            Returns:
+            bool: if robot is at the goal position
+        '''
+        # Compares the robot position and the goal, assuming a 0.05 tolerance
         return position[0] > self.goal[0] - 0.05 \
             and position[0] < self.goal[0] + 0.05 \
             and position[1] > self.goal[1] - 0.05 \
