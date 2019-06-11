@@ -84,10 +84,10 @@ class go_to_goal():
         return [self.fuzzy_system.output['vl'], self.fuzzy_system.output['vr']]
 
     def goal_test(self, position):
-        if len(self.goal) == 2:
-            return position[0] > self.goal[0] - 0.05 and position[0] < self.goal[0] + 0.05 and position[1] > self.goal[1] - 0.05 and position[1] < self.goal[1] + 0.05
-        else:
-            return self.goal == position
+        return position[0] > self.goal[0] - 0.05 \
+            and position[0] < self.goal[0] + 0.05 \
+            and position[1] > self.goal[1] - 0.05 \
+            and position[1] < self.goal[1] + 0.05
 
 def main():
     robot = Robot()
@@ -99,10 +99,10 @@ def main():
         pos = robot.get_current_position()
         orient = robot.get_current_orientation()
         vel = a.get_vel(ultrassonic, pos, orient)
-        print("Orientation: ", orient)
-        print("Pos: ", pos)
+        #print("Orientation: ", orient)
+        #print("Pos: ", pos)
         #print("Ultrassonic: ", ultrassonic)
-        print("vel: ", vel)
+        #print("vel: ", vel)
         robot.set_left_velocity(vel[0])  # rad/s
         robot.set_right_velocity(vel[1])
         time.sleep(0.2)
