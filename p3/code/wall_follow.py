@@ -14,7 +14,7 @@ class WallFollow:
     Configure the robot behaviour to follow the wall to the right
     """
     def __init__(self):
-        self.FRONT_SENSORS = [3, 4]
+        self.RIGHT_SENSORS = [7, 8]
         self.max_speed = 2.0
 
     def init_fuzzy(self):
