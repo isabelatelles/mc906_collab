@@ -20,11 +20,12 @@ class go_to_goal():
         max_speed(float): Maximum speed of each wheel
         steps(float): Size of each step of the robot
     '''
-    def __init__(self, goal):
+    def __init__(self, goal, defuzzify_method = 'centroid'):
         self.goal = goal
         self.NUM_SENSORS = 8
         self.max_speed = pi
         self.steps = 0.01
+        self.defuzzify_method = defuzzify_method
 
     def init_fuzzy(self):
         ''' Make the fuzzy setup by defining membership functions and rules
@@ -60,6 +61,9 @@ class go_to_goal():
                                                                 self.max_speed])
         v_right['negative'] = fuzz.trimf(v_left.universe, [-self.max_speed
                                              + 0.1, -self.max_speed + 0.1, 0.0])
+
+        v_left.defuzzify_method = self.defuzzify_method
+        v_right.defuzzify_method = self.defuzzify_method
 
         # Group sensor reading by its positions
         far_from_obstacles = distance[0]['away'] & distance[1]['away'] & \
@@ -159,29 +163,45 @@ class go_to_goal():
             Returns:
             bool: if robot is at the goal position
         '''
-        # Compares the robot position and the goal, assuming a 0.05 tolerance
-        return position[0] > self.goal[0] - 0.05 \
-            and position[0] < self.goal[0] + 0.05 \
-            and position[1] > self.goal[1] - 0.05 \
-            and position[1] < self.goal[1] + 0.05
+        # Compares the robot position and the goal, assuming a +/-0.25 tolerance
+        # (approximate size/2 of the robot)
+        return round(position[0], 1) > round(self.goal[0] - 0.25, 1) \
+            and round(position[0], 1) < round(self.goal[0] + 0.25 , 1) \
+            and round(position[1], 1) > round(self.goal[1] - 0.25, 1) \
+            and round(position[1], 1) < round(self.goal[1] + 0.25, 1)
 
 def main():
+    DEFUZZIFICATION_METHODS = ['centroid', 'bisector', 'mom', 'som', 'lom']
+    defuzzify_method = DEFUZZIFICATION_METHODS[0]
+
     robot = Robot()
-    a = go_to_goal((-5, 1.7))
+    goal = (4, 5)
+    a = go_to_goal(goal, defuzzify_method)
     a.init_fuzzy()
 
-    while(not a.goal_test(robot.get_current_position())):
-        ultrassonic = robot.read_ultrassonic_sensors()[0:8]
-        pos = robot.get_current_position()
-        orient = robot.get_current_orientation()
-        vel = a.get_vel(ultrassonic, pos, orient)
-        #print("Orientation: ", orient)
-        #print("Pos: ", pos)
-        #print("Ultrassonic: ", ultrassonic)
-        #print("vel: ", vel)
-        robot.set_left_velocity(vel[0])  # rad/s
-        robot.set_right_velocity(vel[1])
-        time.sleep(0.2)
+    all_velocities = []
+    all_positions = []
+
+    (x, y, z) = robot.get_current_position()
+    initial_position = (round(x, 1), round(y, 1))
+    print("Initial position: {}".format(initial_position))
+
+    with open("../outputs/g2g/velocities_{}_{}_{}.csv".format(initial_position, goal, defuzzify_method), 'w') as fv:
+        with open("../outputs/g2g/positions_{}_{}_{}.csv".format(initial_position, goal, defuzzify_method), 'w') as fp:
+            while(not a.goal_test(robot.get_current_position())):
+                ultrassonic = robot.read_ultrassonic_sensors()[0:8]
+                pos = robot.get_current_position()
+                orient = robot.get_current_orientation()
+                vel = a.get_vel(ultrassonic, pos, orient)
+                fv.write(str(vel[0]) + ", " + str(vel[1]) + "\n")
+                fp.write(str(pos[0]) + ", " + str(pos[1]) + "\n")
+                #print("Orientation: ", orient)
+                #print("Pos: ", pos)
+                #print("Ultrassonic: ", ultrassonic)
+                #print("vel: ", vel)
+                robot.set_left_velocity(vel[0])  # rad/s
+                robot.set_right_velocity(vel[1])
+                time.sleep(0.2)
 
     # Make sure the robot stop when get to the goal - This for was added due to
     # some failures at sensor writing
