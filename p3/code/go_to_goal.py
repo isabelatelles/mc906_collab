@@ -145,7 +145,7 @@ class go_to_goal():
         a = atan2(pos[1] - self.goal[1], self.goal[0] - pos[0])
         # Get the angle the robot needs to rotate
         angle = self._sum_angles(a, orient[2])
-        #print("Angle: ", angle)
+
         self.fuzzy_system.input["direction"] = angle
 
         for i in range(len(dist)):
@@ -175,7 +175,7 @@ def main():
     defuzzify_method = DEFUZZIFICATION_METHODS[0]
 
     robot = Robot()
-    goal = (4, 5)
+    goal = (-0.8, -4.5)
     a = go_to_goal(goal, defuzzify_method)
     a.init_fuzzy()
 
@@ -186,8 +186,11 @@ def main():
     initial_position = (round(x, 1), round(y, 1))
     print("Initial position: {}".format(initial_position))
 
-    with open("../outputs/g2g/velocities_{}_{}_{}.csv".format(initial_position, goal, defuzzify_method), 'w') as fv:
-        with open("../outputs/g2g/positions_{}_{}_{}.csv".format(initial_position, goal, defuzzify_method), 'w') as fp:
+    with open("../outputs/g2g/velocities_{}_{}_{}.csv".format(initial_position,\
+                                            goal, defuzzify_method), 'w') as fv:
+        with \
+         open("../outputs/g2g/positions_{}_{}_{}.csv".format(initial_position,\
+                                            goal, defuzzify_method), 'w') as fp:
             while(not a.goal_test(robot.get_current_position())):
                 ultrassonic = robot.read_ultrassonic_sensors()[0:8]
                 pos = robot.get_current_position()
@@ -195,10 +198,8 @@ def main():
                 vel = a.get_vel(ultrassonic, pos, orient)
                 fv.write(str(vel[0]) + ", " + str(vel[1]) + "\n")
                 fp.write(str(pos[0]) + ", " + str(pos[1]) + "\n")
-                #print("Orientation: ", orient)
-                #print("Pos: ", pos)
-                #print("Ultrassonic: ", ultrassonic)
-                #print("vel: ", vel)
+                print("Ultrassonic: ", ultrassonic)
+                print("vel: ", vel)
                 robot.set_left_velocity(vel[0])  # rad/s
                 robot.set_right_velocity(vel[1])
                 time.sleep(0.2)
