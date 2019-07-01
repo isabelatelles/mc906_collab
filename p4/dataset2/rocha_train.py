@@ -108,7 +108,7 @@ for layer in base_model.layers:
 x = base_model.output
 x = Flatten()(x)
 x = Dense(1024, activation="relu")(x)
-x = Dropout(0.3)(x)
+x = Dropout(0.5)(x)
 output = Dense(83, activation="softmax")(x)
 model = Model(input = base_model.input, output = output)
 
