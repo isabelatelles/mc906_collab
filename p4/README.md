@@ -1,1 +1,14 @@
 # Dog Breed Classifier
+
+## Dataset 1
+120 breeds of dogs (reduced to 35)  
+Train set: 10222 samples  
+Test set: 10357 samples (not labeled)  
+Download link: https://www.kaggle.com/c/dog-breed-identification/data
+
+## Dataset 2
+85 breeds of dogs  
+Train set: 8300 samples  
+Validation set: 6022 samples  
+Test set: 5420 samples  
+Download link: http://www.recod.ic.unicamp.br/~feandalo/MO444_dogs.tar.gz
