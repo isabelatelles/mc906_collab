@@ -1,5 +1,8 @@
 # Dog Breed Classifier
 
+## YouTube video link
+https://youtu.be/YnLmpSr-nBA
+
 ## Dataset 1
 120 breeds of dogs (reduced to 35)  
 Train set: 10222 samples  
